@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "1.0",
+  "packageId": "googlechromelabs-github-io-webmcp",
+  "version": "0.1.0",
+  "merchantOrigin": "https://googlechromelabs.github.io",
+  "externalOrigins": [],
+  "generatedAt": "2026-11-03T16:14:16.537Z",
+  "files": [
+    {
+      "path": "bootstrap.js",
+      "sha256": "ebe9a420d22d1f3f595fcf8bb3cce6b0778d7995c9f2644514213b339125ed16"
+    },
+    {
+      "path": "config.json",
+      "sha256": "78d69f34a0c9e7fb7f15c5718595aa3f80e287dc63c872b67f4cc4fec8ce4849"
+    },
+    {
+      "path": "hosting.json",
+      "sha256": "3c37bc30148114ca64c136c708df41be1c54e3a4bbb09c6f0e56085eb9654ced"
+    },
+    {
+      "path": "merchant-integration.md",
+      "sha256": "1e5d52d729c66e06182f585606270391e366d92a0109e75e7262111986e4b2f2"
+    },
+    {
+      "path": "package-review.md",
+      "sha256": "6adebe2eb97e90980d0da3a1798169a65832cdc6900f79cd8f816dba3cbf6c7d"
+    },
+    {
+      "path": "page-families/family-1.js",
+      "sha256": "7fd9a01f69489f78dc76c5c116946aae79cbfee0820c67a70f78666faae66c33"
+    },
+    {
+      "path": "provenance.json",
+      "sha256": "9bd1f9dd450725161eae588bd51ee57e7f57dfb147a1c86308b0a28fa1dc487f"
+    },
+    {
+      "path": "runtime-helpers.js",
+      "sha256": "fd4c7cb84b32cdf2a89113a94a04d555b0156fb63247f77c1abd9fad9b4caba7"
+    },
+    {
+      "path": "runtime.js",
+      "sha256": "dfd82a502c435d6e4010826ae8716d7e8d297d760c68569f17cf88acecc6ef47"
+    }
+  ]
+}

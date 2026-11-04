@@ -1,0 +1,8 @@
+{
+  "packageId": "googlechromelabs-github-io-webmcp",
+  "version": "0.1.0",
+  "delivery": "static-assets-only",
+  "suggestedVersionedPath": "/webmcp/googlechromelabs-github-io-webmcp/0.1.0/",
+  "actionExecutionEndpoint": null,
+  "requiredMerchantInjection": "type=module"
+}

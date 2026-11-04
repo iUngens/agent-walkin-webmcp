@@ -1,0 +1,76 @@
+name: Publish static WebMCP packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  verify-immutable-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reject changes to previously published versions
+        shell: bash
+        run: |
+          previous="${{ github.event.before }}"
+          if [[ "$previous" == "0000000000000000000000000000000000000000" ]]; then
+            exit 0
+          fi
+          git diff --name-only "$previous" "$GITHUB_SHA" -- site/webmcp/ | while IFS= read -r path; do
+            [[ -n "$path" ]] || continue
+            relative_path="${path#site/webmcp/}"
+            package_id="${relative_path%%/*}"
+            remainder="${relative_path#*/}"
+            version="${remainder%%/*}"
+            version_dir="site/webmcp/$package_id/$version"
+            if git cat-file -e "$previous:$version_dir" 2>/dev/null; then
+              echo "Published package version is immutable: $version_dir (changed $path)" >&2
+              exit 1
+            fi
+          done
+      - name: Verify package payload hashes
+        run: |
+          for manifest in site/webmcp/*/*/manifest.json; do
+            [[ -f "$manifest" ]] || continue
+            node --input-type=module - "$manifest" <<'NODE'
+          import { createHash } from 'node:crypto';
+          import { readFile } from 'node:fs/promises';
+          import { dirname, join } from 'node:path';
+          const manifestPath = process.argv[2];
+          const root = dirname(manifestPath);
+          const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+          for (const file of manifest.files) {
+            const bytes = await readFile(join(root, file.path));
+            const actual = createHash('sha256').update(bytes).digest('hex');
+            if (actual !== file.sha256) throw new Error(`Hash mismatch: ${manifestPath} -> ${file.path}`);
+          }
+          NODE
+          done
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: verify-immutable-versions
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

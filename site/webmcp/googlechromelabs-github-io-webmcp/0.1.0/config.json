@@ -1,0 +1,15 @@
+{
+  "packageId": "googlechromelabs-github-io-webmcp",
+  "version": "0.1.0",
+  "merchantOrigin": "https://googlechromelabs.github.io",
+  "externalOrigins": [],
+  "relaxedQueryOrigins": [],
+  "pageFamilies": [
+    {
+      "id": "family-1",
+      "origin": "https://googlechromelabs.github.io",
+      "pathPattern": "/webmcp-tools/demos/pizza-maker",
+      "queryRules": {}
+    }
+  ]
+}
