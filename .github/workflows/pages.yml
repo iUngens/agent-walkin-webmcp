@@ -28,7 +28,12 @@ jobs:
         shell: bash
         run: |
           previous="${{ github.event.before }}"
-          if [[ "$previous" == "0000000000000000000000000000000000000000" ]]; then
+          if [[ -z "$previous" || "$previous" == "0000000000000000000000000000000000000000" ]]; then
+            # Manual dispatch events have no `before` SHA; compare against the
+            # current commit's parent so reruns still enforce version immutability.
+            previous="$(git rev-parse "${GITHUB_SHA}^" 2>/dev/null || true)"
+          fi
+          if [[ -z "$previous" ]]; then
             exit 0
           fi
           git diff --name-only "$previous" "$GITHUB_SHA" -- site/webmcp/ | while IFS= read -r path; do
