@@ -28,7 +28,7 @@
 - [x] 3.5 Implement source-linked semantic lookup tools that read only packaged semantic assets and omit empty helpers; verify lookup returns relevant source references without network or page mutations.
 - [x] 3.6 Enforce separation between understanding-stage temporary origins and runtime external-origin allowlists; verify a temporary observation origin is excluded until separately approved in package metadata.
 - [x] 3.7 Generate complete self-hosted bundle instructions and merchant header script configuration; verify files run when served from a local static server.
-- [ ] 3.8 Publish immutable, versioned package assets through platform static hosting without an action-execution endpoint; verify hosted and downloaded bundles have equivalent content and integrity metadata.
+- [x] 3.8 Publish immutable, versioned package assets through platform static hosting without an action-execution endpoint; verify hosted and downloaded bundles have equivalent content and integrity metadata.
 - [x] 3.9 Generate a package review report linking each tool to its evidence, risk classification, validation result, and unresolved limitations; verify unresolved or unvalidated candidates cannot appear as ready-to-publish tools.
 
 ## 4. Demo evaluation and release checks
