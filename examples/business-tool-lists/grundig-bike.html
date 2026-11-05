@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grundig Bike | Business Tool Candidates</title>
+  <style>
+    :root { color-scheme: light; --ink: #17202a; --muted: #5d6875; --line: #d9e0e7; --blue: #145da0; --green: #247a4d; --amber: #9a5b00; --red: #a52a2a; --bg: #f5f7fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1500px; margin: 0 auto; padding: 32px 22px 56px; }
+    header, section { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 22px; margin-bottom: 18px; }
+    h1, h2 { margin: 0 0 10px; line-height: 1.2; } h1 { font-size: 28px; } h2 { font-size: 19px; }
+    p { margin: 8px 0; } .muted { color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }
+    .meta div { background: var(--bg); border: 1px solid var(--line); padding: 10px 12px; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1120px; } th, td { padding: 11px 10px; border-top: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { color: var(--muted); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; background: #fbfcfd; }
+    .table-wrap { overflow-x: auto; } code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
+    .status { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .direct { color: var(--green); background: #e8f5ed; } .template { color: var(--amber); background: #fff2dc; } .deferred { color: var(--red); background: #fde8e8; } .inferred { color: var(--blue); background: #e8f1fb; }
+    .note { border-left: 4px solid var(--blue); padding: 10px 14px; background: #f3f8fd; }
+    ul { margin: 8px 0 0 20px; padding: 0; } li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Grundig Bike：业务操作候选清单</h1>
+    <p class="muted">目标：把普通公开页面理解结果压缩成少量真正有业务意义的候选工具。重复语言页、推荐商品卡片和页脚链接不单独生成工具；筛选、排序等细节作为目录浏览的输入能力保留。</p>
+    <div class="meta">
+      <div><strong>站点</strong><br><a href="https://grundig-bike.com/">https://grundig-bike.com/</a></div>
+      <div><strong>理解快照</strong><br><code>acceptance/grundig/selector-fix.json</code></div>
+      <div><strong>公开范围</strong><br>商品、目录、购物车、搜索、FAQ/政策、订单追踪</div>
+      <div><strong>暂缓范围</strong><br>登录、账户、身份验证和真实下单提交</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>抽取规则</h2>
+    <div class="note">独立抽取先看页面业务角色，再看控件语义、表单目标和可见状态变化。最后才用参考清单逐项对账。这样可以发现“动作存在于页面证据中，但底层记录把它误标成普通链接”的漏选。</div>
+    <ul>
+      <li><strong>直接观察到：</strong>页面或控件已经明确表达业务目标，并有稳定证据。</li>
+      <li><strong>模板可见：</strong>空状态或模板文字显示能力存在，但本次没有用真实数据验证。</li>
+      <li><strong>推断待证：</strong>有跨页面/跨变体线索，但还不能发布为已验证动作。</li>
+      <li><strong>暂缓：</strong>登录或外部写入按项目边界停止。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>业务工具候选</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>工具候选</th><th>用户目标</th><th>输入</th><th>前置条件与结果</th><th>状态</th><th>证据</th></tr></thead>
+        <tbody>
+          <tr><td><code>browse_store</code></td><td>浏览商品目录，按商品类别、库存和价格范围缩小结果。</td><td>集合/类别；可选库存、价格、排序条件。</td><td>公开目录页可访问；返回商品卡片、价格、库存和详情链接。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-ff6ba58241dd-7</code>：Alle Produkte；控件含 Availability、Price、Sortieren nach。</td></tr>
+          <tr><td><code>search_catalog</code></td><td>用关键词查找商品。</td><td><code>query</code>。</td><td>提交到站内 <code>/search</code>；返回匹配商品/内容结果。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-7dc0edd3137e-88</code>；<code>evidence-obs-7dc0edd3137e-88-8</code>、<code>-9</code>。</td></tr>
+          <tr><td><code>get_product</code></td><td>读取一个商品的名称、价格、库存、说明和购买入口。</td><td>商品 URL 或稳定商品标识。</td><td>商品详情页可访问；返回当前公开商品信息。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-7468c95b26aa-85</code>（ECB28）；<code>obs-2f03aeb16131-81</code>（GCB-1）。</td></tr>
+          <tr><td><code>show_variant</code></td><td>查看同一商品的颜色/规格变体及对应价格、库存。</td><td>商品标识；变体选项。</td><td>商品页有 <code>select name="id"</code>；当前快照还需要验证同页切换后的状态更新。</td><td><span class="status inferred">inferred / needs-verification</span></td><td><code>obs-7468c95b26aa-85</code> 的变体选择器；GCB-1 还有 <code>obs-4b6be99c648c-82</code>、<code>obs-adda0db96176-83</code>。</td></tr>
+          <tr><td><code>add_to_cart</code></td><td>把选定商品加入购物车。</td><td>商品标识；可选变体和数量。</td><td>商品可售且变体已选；购物车应出现对应行和数量。真实写入仍需商户批准后测试。</td><td><span class="status direct">directly-observed / write-boundary</span></td><td><code>evidence-obs-7468c95b26aa-85-45</code>：<code>In den Warenkorb</code>；同类证据也出现在包和锁商品页。</td></tr>
+          <tr><td><code>get_cart</code></td><td>查看当前购物车商品、数量、小计和可用结账入口。</td><td>无；购物车由当前会话决定。</td><td>打开 <code>/cart</code>；返回空购物车或购物车行。当前快照为空购物车。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-8f7773a97f9d-6</code> / <code>obs-b54f2e0c976d-9</code>：Warenkorb 页面。</td></tr>
+          <tr><td><code>update_cart_lines</code></td><td>修改购物车中商品数量。</td><td>商品/变体标识；目标数量。</td><td>需要已有购物车行；模板提供 <code>Einkaufswagen aktualisieren</code>，但本次没有非空购物车状态可验证。</td><td><span class="status template">template-only / needs-verification</span></td><td><code>obs-8f7773a97f9d-6</code> 的购物车表单文本包含更新入口。</td></tr>
+          <tr><td><code>cancel_cart</code></td><td>移除购物车商品或清空购物车。</td><td>可选商品/变体标识；或清空标志。</td><td>需要已有购物车行；空购物车快照没有证明单项移除和清空按钮的实际行为。</td><td><span class="status template">template-only / needs-verification</span></td><td><code>obs-8f7773a97f9d-6</code> 的购物车模板；未观察到带商品行的状态变化。</td></tr>
+          <tr><td><code>proceed_to_checkout</code></td><td>从购物车进入结账。</td><td>无；使用当前购物车。</td><td>购物车有商品且结账入口可用；只允许验证跳转到结账前后的页面边界，不提交付款。</td><td><span class="status template">template-only / pre-submit</span></td><td><code>obs-8f7773a97f9d-6</code> 的模板文字包含 <code>Auschecken</code>；当前为空车，真实跳转未验证。</td></tr>
+          <tr><td><code>track_order</code> <small>(reference: <code>manage_orders</code>)</small></td><td>根据物流单号查询公开配送状态。</td><td>物流/追踪单号。</td><td>订单追踪页提供单号输入和 Track；这只证明物流追踪，不扩展为取消或修改订单。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-cb0590b647f9-66</code>：Ihre Bestellung verfolgen；页面正文说明输入 Sendungsverfolgungsnummer。</td></tr>
+          <tr><td><code>search_shop_policies_and_faqs</code></td><td>查找售后、配送、退款、付款和常见问题答案。</td><td>自然语言问题或主题。</td><td>只读公开语义能力；来源包括 FAQ、配送、退货、付款和服务支持页面。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-acf46dee4e80-58</code>、<code>obs-8c8adc789922-60</code>、<code>obs-db85ccfbf8e9-76</code>、<code>obs-c0c1bf9da688-77</code>。</td></tr>
+          <tr><td><code>get_ucp_profile</code></td><td>读取登录用户的账户/订单概览。</td><td>登录会话。</td><td>登录和认证属于项目明确暂缓范围；当前不能声称有公开可执行合同。</td><td><span class="status deferred">deferred</span></td><td>没有公开证据；按认证暂缓边界排除首版可发布工具。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>最终查漏对账</h2>
+    <p>独立抽取后逐项检查参考清单：<code>add_to_cart</code>、<code>browse_store</code>、<code>cancel_cart</code>、<code>get_cart</code>、<code>get_product</code>、<code>get_ucp_profile</code>、<code>manage_orders</code>、<code>proceed_to_checkout</code>、<code>search_catalog</code>、<code>search_shop_policies_and_faqs</code>、<code>show_variant</code>、<code>update_cart_lines</code> 均已对应到上表。没有把参考清单作为抽取输入；其中弱证据项目被明确标为待补证或暂缓。</p>
+    <p class="muted">发布前必须补做非空购物车、变体切换和结账入口的可逆验证；真实订单、付款、账户登录不在本次理解运行中提交。</p>
+  </section>
+</main>
+</body>
+</html>

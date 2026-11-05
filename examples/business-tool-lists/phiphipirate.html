@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phi Phi Pirate | Business Tool Candidates</title>
+  <style>
+    :root { color-scheme: light; --ink: #17202a; --muted: #5d6875; --line: #d9e0e7; --blue: #145da0; --green: #247a4d; --amber: #9a5b00; --red: #a52a2a; --bg: #f5f7fa; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1500px; margin: 0 auto; padding: 32px 22px 56px; }
+    header, section { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 22px; margin-bottom: 18px; }
+    h1, h2 { margin: 0 0 10px; line-height: 1.2; } h1 { font-size: 28px; } h2 { font-size: 19px; }
+    p { margin: 8px 0; } .muted { color: var(--muted); }
+    .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 16px; }
+    .meta div { background: var(--bg); border: 1px solid var(--line); padding: 10px 12px; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; min-width: 1120px; } th, td { padding: 11px 10px; border-top: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { color: var(--muted); font-size: 12px; letter-spacing: .03em; text-transform: uppercase; background: #fbfcfd; }
+    .table-wrap { overflow-x: auto; } code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
+    .status { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .direct { color: var(--green); background: #e8f5ed; } .template { color: var(--amber); background: #fff2dc; } .deferred { color: var(--red); background: #fde8e8; } .inferred { color: var(--blue); background: #e8f1fb; }
+    .note { border-left: 4px solid var(--blue); padding: 10px 14px; background: #f3f8fd; }
+    ul { margin: 8px 0 0 20px; padding: 0; } li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Phi Phi Pirate：业务操作候选清单</h1>
+    <p class="muted">目标：围绕“了解一日游、判断日期是否有位、开始预订、找到集合地点和规则”整理候选工具。照片、评价、语言/货币切换和普通导航是内容或界面细节，不单独生成业务工具。</p>
+    <div class="meta">
+      <div><strong>站点</strong><br><a href="https://phiphipirate.com/en">https://phiphipirate.com/en</a></div>
+      <div><strong>理解快照</strong><br><code>acceptance/phiphipirate/selector-fix.json</code></div>
+      <div><strong>公开范围</strong><br>首页、活动/地点、集合信息、FAQ、退款/天气、预订入口</div>
+      <div><strong>暂缓范围</strong><br>支付、真实预订、WhatsApp 发送、登录后订单查询</div>
+    </div>
+  </header>
+
+  <section>
+    <h2>抽取规则</h2>
+    <div class="note">本次先从普通页面正文和可见控件独立提炼业务闭环，再用参考材料查漏。预订按钮是业务入口，但因为它可能进入外部预订/支付流程，候选工具只描述到预提交边界。</div>
+    <ul>
+      <li>“能回答游客问题”的能力进入语义工具候选，例如行程内容、集合地点、FAQ 和取消/天气规则。</li>
+      <li>“改变预订状态”的能力进入动作候选，例如查看日期余位和开始预订。</li>
+      <li>发送电话号码、提交预订、支付订金、查询个人订单都保留为边界记录，不伪造成功结果。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>业务工具候选</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>工具候选</th><th>用户目标</th><th>输入</th><th>前置条件与结果</th><th>状态</th><th>证据</th></tr></thead>
+        <tbody>
+          <tr><td><code>browse_tours</code></td><td>浏览 Pirate Boat 一日游及其包含的活动、地点和行程特点。</td><td>可选主题：活动、地点、适合人群。</td><td>读取公开首页和 About 页面；返回行程目录/主题入口，不产生外部写入。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-bd48178a1f0a-1</code>、<code>obs-34678d09b23f-6</code>、<code>obs-4992343d2543-7</code>。</td></tr>
+          <tr><td><code>get_tour_details</code></td><td>读取行程时长、包含的活动、出发地点、价格/订金和注意事项。</td><td>行程标识或主题。</td><td>公开内容读取；应返回带来源的结构化说明。它属于语义工具，不把每段页面文本拆成几十个动作。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-34678d09b23f-6</code>（Tour Activities）；<code>obs-4992343d2543-7</code>（Tour Locations）；首页正文含“seven hours”“kayak, snorkel, paddleboard”。</td></tr>
+          <tr><td><code>check_tour_availability</code></td><td>判断指定日期是否还能预订，并返回当前显示的价格/订金。</td><td>日期；可选人数和货币。</td><td>网站正文说明“日期能选就有位，满员后关闭日期”；需要进入日期选择/预订界面确认真实字段和返回状态。</td><td><span class="status inferred">inferred / needs-verification</span></td><td><code>obs-bd48178a1f0a-1</code>、<code>obs-735305a11a98-2</code> 正文；<code>evidence-obs-509770fd487c-37-9</code> 记录了 Select Date 控件。</td></tr>
+          <tr><td><code>start_tour_booking</code></td><td>为选定日期和人数打开标准预订流程，停在确认/付款前。</td><td>日期；人数；可选语言/货币。</td><td>点击 Book Tickets/Book Pirate Boat 或 Reserve with 300 THB；只记录预订表单和预提交边界，不提交订金或最终预订。</td><td><span class="status template">template-only / pre-submit</span></td><td><code>evidence-obs-bd48178a1f0a-1-7</code>、<code>-188</code>、<code>-35</code>；不同公开页面重复出现相同入口。</td></tr>
+          <tr><td><code>get_meeting_point</code></td><td>找到 Phi Phi Don 集合地点、报到时间和到达说明。</td><td>可选日期/行程。</td><td>只读页面内容；返回集合点、报到截止时间和地图/地点说明。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-4e49291bf162-4</code>（How to Take Part）；页面控件文本含 “Relax Bar, Phi Phi Don” 和 “Check in by 11:30 AM”。</td></tr>
+          <tr><td><code>search_tour_policies_and_faqs</code></td><td>查询预订方式、退款、天气取消、费用和常见问题。</td><td>自然语言问题或主题。</td><td>只读公开 FAQ/条款；返回答案和对应页面来源。</td><td><span class="status direct">directly-observed</span></td><td><code>obs-6fc737864e72-10</code>（FAQ）；<code>obs-8c9bd22dab8b-40</code>（Cancellations）；页脚公开链接 Weather/Refunds。</td></tr>
+          <tr><td><code>request_tour_info</code></td><td>把行程资料发送到游客的 WhatsApp。</td><td>国家区号和电话号码。</td><td>页面有电话输入和发送按钮；这是外部消息写入，理解阶段只记录字段和提交边界，不发送消息。</td><td><span class="status deferred">deferred external-write</span></td><td><code>evidence-obs-bd48178a1f0a-1-12</code>、<code>-13</code>；同一表单在多个语言页重复。</td></tr>
+          <tr><td><code>lookup_booking</code></td><td>打开“我的预订”查看已有预订。</td><td>预订凭证或登录会话。</td><td>公开导航存在 My Booking，但个人订单查询需要认证/敏感数据；当前项目暂缓登录调研。</td><td><span class="status deferred">deferred authentication</span></td><td><code>evidence-obs-bd48178a1f0a-1-206</code>；页面 <code>/en/my-booking</code> 已发现，但不把导航当成已验证订单 API。</td></tr>
+          <tr><td><code>inquire_private_charter</code></td><td>了解或发起私人包船咨询。</td><td>日期、人数、联系方式和需求描述。</td><td>Private Charters 页面属于独立业务入口；发送咨询是外部写入，先保存公开字段/边界，不提交消息。</td><td><span class="status deferred">deferred external-write</span></td><td><code>obs-509770fd487c-37</code>；入口从首页和页脚重复出现。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>不单独生成工具的项目</h2>
+    <ul>
+      <li>照片、视频、评价分页、语言/货币切换：属于内容展示或界面状态。</li>
+      <li>普通导航、社交媒体链接、Facebook/Tripadvisor 外链：不是站点核心业务动作。</li>
+      <li>12GO 交通外链：是外部供应商流程，当前只作为说明链接，不纳入本站 WebMCP 候选。</li>
+      <li>真实预订确认、支付订金、WhatsApp 发送：只能在商户批准并完成安全边界设计后实现。</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
